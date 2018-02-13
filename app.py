@@ -1,21 +1,16 @@
 import requests
 import json 
 
-from flask import Flask
+from flask import Flask, request, jsonify
+
 # from flask__sslify import SSLify
 
-# app = Flask(__name__)
+app = Flask(__name__)
 # sslify = SSLify(app)
-
-# wsgi_app = app.wsgi_app
-
-
-# @app.route('/')
-# def index():
-#     """Renders a sample page."""
-#     return "Hello World!"
+wsgi_app = app.wsgi_app
 
 URL = 'https://api.telegram.org/bot<token>/'
+
 
 def write_json(data, filename='answer.json'):
     with open(filename, 'w') as f:
@@ -37,13 +32,21 @@ def main():
     r = get_updates()
     chat_id = r['result'][-1]['message']['chat']['id']
     send_message(char_id)
+    pass
+
+
+
+@app.route('/', methods=['POST', 'GET'])
+def index():
+    """Renders a sample page."""
+    if request.method == 'POST':
+        r = request.get_json()
+        char_id = r['message']['chat']['id']
+        message = r['message']['text']
+        write_json(r)
+        return jsonify(r)
+    return "<h1>WELCOME!</h1>"
 
 
 if __name__ == '__main__':
-    # import os
-    # HOST = os.environ.get('SERVER_HOST', 'localhost')
-    # try:
-    #     PORT = int(os.environ.get('SERVER_PORT', '5555'))
-    # except ValueError:
-    #     PORT = 5555
-    # app.run(HOST, PORT)
+    app.run()
