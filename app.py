@@ -21,11 +21,10 @@ def write_json(data, filename='answer.json'):
     with open(filename, 'w') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
-
 def get_updates():
     url = URL + 'getUpdates'
     r = requests.get(url)
-    write_json(r.json())
+    return r.json()
 
 def send_message(chat_id, text="bla-bla"):
     url = URL + 'sendMessage'
@@ -35,8 +34,9 @@ def send_message(chat_id, text="bla-bla"):
     
 
 def main():
-    r = requests.get(URL + 'getMe')
-    print(r.json())
+    r = get_updates()
+    chat_id = r['result'][-1]['message']['chat']['id']
+    send_message(char_id)
 
 
 if __name__ == '__main__':
